@@ -1,10 +1,5 @@
 grammar Python3Grammar;
 
-@lexer::members {
-    depth = 0
-    n = 0
-}
-
 //Data types
 INT : [0-9]+ ; //Integer
 FLT : INT '.' INT ; //Float
@@ -13,24 +8,24 @@ STR : '\'' ~('\n')*? '\'' //String with single quotes
     | '"' ~('\n')*? '"' //String with double quotes
     ;
 CMPLX : (INT | FLT) 'i'? ('+' | '-') (INT | FLT) 'j' ; //Complex number
-lst : '[' ']' | '[' (val | VAR) (',' (val | VAR))* ']' ; //List
-dict_ : '{' '}' | '{' (val | VAR) ':' (val | VAR) (',' (val | VAR) ':' (val | VAR))* '}' ; //dictionary
-set_ : '{' '}' | '{' (val | VAR) (',' (val | VAR))* '}' ; //set
-tup : '(' ')' | '(' (val | VAR) (',' (val | VAR))* ')' ; //Tuple
+lst : '[' ']' | '[' (data) (',' (data))* ']' ; //List
+dict_ : '{' '}' | '{' (data) ':' (data) (',' (data) ':' (data))* '}' ; //dictionary
+set_ : '{' '}' | '{' (data) (',' (data))* '}' ; //set
+tup : '(' ')' | '(' (data) (',' (data))* ')' ; //Tuple
 NONE : 'None' ;
 
 //Intermediate data types
 num : INT | FLT | CMPLX ; //Number (integer or float)
 array : STR | lst | set_ | tup | dict_ ; //Array
-val : num | BOOL | array ; //Any data value
+val : num | BOOL | array ; //Any literal data value
+data : val | VAR | func ; //Any data value
 
 //Operators
 arop : '+' | NEG | '*' | '/' | '%' ; //Arithmatic Operation
 NEG : '-' ;
-ASOP : '-=' | '+=' | '*=' | '/=' ; //Assignment Operation (excluding EQU)
+asop : '-=' | '+=' | '*=' | '/=' ; //Assignment Operation (excluding EQU)
 EQU : '=' ;
-CONOP : '==' | '!=' | '<' | '>' | '<=' | '>=' | 'and' | 'or' | 'is' | 'not' | IN ; //Conditional Operation
-IN : 'in' ;
+conop : '==' | '!=' | '<' | '>' | '<=' | '>=' | 'and' | 'or' | 'is' | 'not' | IN ; //Conditional Operation
 
 //KEYWORDS
 IF : 'if' ;
@@ -38,6 +33,8 @@ ELIF : 'elif' ;
 ELSE : 'else' ;
 WHILE : 'while' ;
 FOR : 'for' ;
+IN : 'in' ;
+DEF : 'def' ;
 
 //Misc
 VAR : ( [a-z] | [A-Z] | '_' )([a-z] | [A-Z] | [0-9] | '_' )* ; //Variable Name
@@ -46,23 +43,33 @@ INDENT : '    ' ;
 COMMENT : '#' ~'\n'* -> skip ;
 WS : ' ' -> skip ; //Skip white spaces
 
-//Core expressions
-arithExp : arithExp (arop arithExp)+ | (num | VAR) | '(' arithExp ')' | NEG arithExp ;
-arithAssignExp : VAR ASOP arithExp ;
-assignExp: VAR EQU (VAR | array | arithExp | NONE) ;
-conExp : (val | VAR) (CONOP (val | VAR))* | '(' conExp ')' ;
+//Functions
+func : VAR '(' ')' | VAR '(' (data) (',' (data))* ')' ;
+funcVar : VAR '(' ')' | VAR '(' (VAR) (',' (VAR))* ')'  ;
+funcDef : DEF funcVar ':' NL program ;
+
+//Assignment/arithmatic expressions
+arithExp : arithExp (arop arithExp)+
+    | (num | VAR)
+    | '(' arithExp ')'
+    | NEG arithExp ;
+arithAssignExp : VAR asop arithExp ;
+assignExp: VAR EQU (VAR | array | arithExp | NONE | func) ;
 //If statements
-ifExp : IF conExp ':' {depth = depth+1} ;
-elifExp : ELIF conExp ':' {depth = depth+1} ;
-elseExp : ELSE ':' {depth = depth+1} ;
-ifStmt : ifExp NL program {depth = depth-1}
-    (NL elifExp NL program {depth = depth-1})*
-    (NL elseExp NL program {depth = depth-1})? ;
+conExp : (data) (conop (data))* | '(' conExp ')' ;
+ifExp : IF conExp ':' ;
+elifExp : ELIF conExp ':' ;
+elseExp : ELSE ':' ;
+ifStmt : ifExp NL program
+    (NL elifExp NL program)*
+    (NL elseExp NL program)? ;
 //While loops
-whileExp : WHILE conExp ':' {depth = depth+1} ;
-forExp: FOR (val | VAR) IN array ':' {depth = depth+1} ;
-//This one is troublesome (+?)
+whileExp : WHILE conExp ':' ;
+forExp: FOR (val | VAR) IN (array | func) ':' ;
+loopExp : whileExp | forExp ;
+loopStmt : loopExp NL program ;
+//This one is troublesome
 indentation : INDENT* ;
 
-exp : indentation (arithAssignExp | assignExp | ifStmt) ;
+exp : indentation (arithAssignExp | assignExp | ifStmt | loopStmt | funcDef) ;
 program: NL? (exp NL)* exp? ;
