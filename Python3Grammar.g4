@@ -11,7 +11,7 @@ CMPLX : (INT | FLT) 'i'? ('+' | '-') (INT | FLT) 'j' ; //Complex number
 lst : '[' ']' | '[' (data) (',' (data))* ']' ; //List
 dict_ : '{' '}' | '{' (data) ':' (data) (',' (data) ':' (data))* '}' ; //dictionary
 set_ : '{' '}' | '{' (data) (',' (data))* '}' ; //set
-tup : '(' ')' | '(' (data) (',' (data))* ')' ; //Tuple
+tup : '(' (data) (',' (data))+ ')' ; //Tuple
 NONE : 'None' ;
 
 //Intermediate data types
@@ -35,6 +35,7 @@ WHILE : 'while' ;
 FOR : 'for' ;
 IN : 'in' ;
 DEF : 'def' ;
+RETURN : 'return' ;
 
 //Misc
 VAR : ( [a-z] | [A-Z] | '_' )([a-z] | [A-Z] | [0-9] | '_' )* ; //Variable Name
@@ -46,7 +47,9 @@ WS : ' ' -> skip ; //Skip white spaces
 //Functions
 func : VAR '(' ')' | VAR '(' (data) (',' (data))* ')' ;
 funcVar : VAR '(' ')' | VAR '(' (VAR) (',' (VAR))* ')'  ;
-funcDef : DEF funcVar ':' NL program ;
+funcDef : DEF funcVar ':' NL block ;
+return : RETURN returnPar ;
+returnPar : '(' returnPar ')' | (data | arithExp) ;
 
 //Assignment/arithmatic expressions
 arithExp : arithExp (arop arithExp)+
@@ -60,16 +63,17 @@ conExp : (data) (conop (data))* | '(' conExp ')' ;
 ifExp : IF conExp ':' ;
 elifExp : ELIF conExp ':' ;
 elseExp : ELSE ':' ;
-ifStmt : ifExp NL program
-    (NL elifExp NL program)*
-    (NL elseExp NL program)? ;
+ifStmt : ifExp NL block
+    (NL elifExp NL block)*
+    (NL elseExp NL block)? ;
 //While loops
 whileExp : WHILE conExp ':' ;
 forExp: FOR (val | VAR) IN (array | func) ':' ;
 loopExp : whileExp | forExp ;
-loopStmt : loopExp NL program ;
+loopStmt : loopExp NL block ;
 //This one is troublesome
 indentation : INDENT* ;
 
-exp : indentation (arithAssignExp | assignExp | ifStmt | loopStmt | funcDef) ;
-program: NL? (exp NL)* exp? ;
+exp : indentation (arithAssignExp | assignExp | ifStmt | loopStmt | funcDef | func | return) ;
+program : NL? (exp NL)* exp? ;
+block : (exp NL)* exp ;
