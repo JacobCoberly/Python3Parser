@@ -72,8 +72,8 @@ forExp: FOR (val | VAR) IN (array | func) ':' ;
 loopExp : whileExp | forExp ;
 loopStmt : loopExp NL block ;
 //This one is troublesome
-indentation : INDENT* ;
+indentation : INDENT ;
 
-exp : indentation (arithAssignExp | assignExp | ifStmt | loopStmt | funcDef | func | return) ;
-program : NL? (exp NL)* exp? ;
-block : (exp NL)* exp ;
+exp : arithAssignExp | assignExp | ifStmt | loopStmt | funcDef | func | return ;
+program : NL? (exp NL)* exp NL? ;
+block : (indentation exp NL)* indentation exp NL? ;
