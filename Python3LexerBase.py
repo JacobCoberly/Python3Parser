@@ -103,3 +103,6 @@ class Python3LexerBase(Lexer):
                 while len(self.indents) > 0 and self.indents[-1] > indent:
                     self.emitToken(self.createDedent())
                     self.indents.pop()
+                #Added by Jacob Coberly
+                if indent > 0 and indent not in self.indents:
+                    self.indents.append(indent)
