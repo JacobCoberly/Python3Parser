@@ -1,5 +1,13 @@
 grammar Python3Grammar;
 
+//https://github.com/antlr/grammars-v4/blob/master/python/python3/Python3Lexer.g4
+//Describe tokens but don't define
+tokens { INDENT, DEDENT }
+
+//Lexer should have superclass. not parser
+//https://github.com/antlr/grammars-v4/blob/master/python/python3/Python3Lexer.g4
+//options { superClass = Python3LexerBase; }
+
 //Data types
 INT : [0-9]+ ; //Integer
 FLT : INT '.' INT ; //Float
@@ -39,8 +47,13 @@ RETURN : 'return' ;
 
 //Misc
 VAR : ( [a-z] | [A-Z] | '_' )([a-z] | [A-Z] | [0-9] | '_' )* ; //Variable Name
-NL : '\n'+ ;
-INDENT : '    ' ;
+//https://github.com/antlr/grammars-v4/blob/master/python/python3/Python3Lexer.g4
+NL : ( {self.atStartOfInput()}?   SPACE
+  | ( '\r'? '\n' | '\r' | '\f' ) SPACE?
+  )
+  {self.onNewLine();}
+;
+SPACE : '    '+ ;
 COMMENT : '#' ~'\n'* -> skip ;
 WS : ' ' -> skip ; //Skip white spaces
 
@@ -64,16 +77,17 @@ ifExp : IF conExp ':' ;
 elifExp : ELIF conExp ':' ;
 elseExp : ELSE ':' ;
 ifStmt : ifExp NL block
-    (NL elifExp NL block)*
-    (NL elseExp NL block)? ;
+    (elifExp NL block)*
+    (elseExp NL block)? ;
 //While loops
 whileExp : WHILE conExp ':' ;
 forExp: FOR (val | VAR) IN (array | func) ':' ;
 loopExp : whileExp | forExp ;
 loopStmt : loopExp NL block ;
-//This one is troublesome
-indentation : INDENT ;
 
-exp : arithAssignExp | assignExp | ifStmt | loopStmt | funcDef | func | return ;
-program : NL? (exp NL)* exp NL? ;
-block : (indentation exp NL)* indentation exp NL? ;
+//Expressions with blocks should not be followed by NL
+//because the block ends with a NL
+exp : (arithAssignExp | assignExp | func | return) NL
+    | (ifStmt | loopStmt | funcDef) ;
+program : (exp | NL)* EOF ;
+block : INDENT (exp | NL)* DEDENT ;
