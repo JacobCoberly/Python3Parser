@@ -4,9 +4,15 @@ grammar Python3Grammar;
 //Describe tokens but don't define
 tokens { INDENT, DEDENT }
 
-//Lexer should have superclass. not parser
 //https://github.com/antlr/grammars-v4/blob/master/python/python3/Python3Lexer.g4
-//options { superClass = Python3LexerBase; }
+@lexer::header {
+if __name__ is not None and "." in __name__:
+    from .Python3LexerBase import Python3LexerBase
+else:
+    from Python3LexerBase import Python3LexerBase
+}
+
+//Lexer should have superclass Python3LexerBase
 
 //Data types
 INT : [0-9]+ ; //Integer
