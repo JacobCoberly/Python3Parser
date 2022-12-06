@@ -11,7 +11,8 @@ Utilized code is marked in the respective files.
 2. Download antlr v4.11.1 from the antlr website.
 3. Add the .jar file to the /usr/local/lib folder
 4. Download all files in the directory. Navigate to the directory where these files are stored in the terminal.
-5. Run the following command in the terminal:  
+5. Run the following commands in the terminal, in order:  
+- $ export CLASSPATH=".:/usr/local/lib/antlr-4.11.1-complete.jar:$CLASSPATH"  
 - $ python3 Python3Parser.py testCode.py
 
 ## Recompiling the grammar
