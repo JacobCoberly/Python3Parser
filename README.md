@@ -1,6 +1,6 @@
 # Python3Parser
 
-Basic python parser using ANTLR. Supports simple variable assignments, mathematical expressions, if statements, loops, and functions. Includes a Python3Grammar.g4 file, which defines the grammar, and a Python3Parser.py file, which translates the grammar into python 3. Also contains a testCode.py file to test the parser on. Other files are necessary dependants created by ANTLR, some of which are hand modified.
+Basic Python parser using ANTLR. Supports simple variable assignments, mathematical expressions, if statements, loops, and functions. Includes a Python3Grammar.g4 file, which defines the grammar, and a Python3Parser.py file, which translates the grammar into python 3. Also contains a testCode.py file to test the parser on. Other files are necessary dependants created by ANTLR, some of which are hand modified.
 
 Designed by Jacob Coberly.
 Utilizes some code from https://github.com/antlr/grammars-v4/blob/master/python/python3/.
@@ -13,7 +13,8 @@ Utilized code is marked in the respective files.
 4. Download all files in the directory. Navigate to the directory where these files are stored in the terminal.
 5. Run the following commands in the terminal, in order:  
 - $ export CLASSPATH=".:/usr/local/lib/antlr-4.11.1-complete.jar:$CLASSPATH"  
-- $ python3 Python3Parser.py testCode.py
+- $ python3 Python3Parser.py testCode.py  
+The testCode.py document can be modified or replaced with any Python 3 document that you wish to parse.
 
 ## Recompiling the grammar
 It is recommended that you do **not** recompile the grammar if avoidable. If you do, ensure you modify Python3GrammarLexer in the following way:
