@@ -7,7 +7,7 @@ Utilizes some code from https://github.com/antlr/grammars-v4/blob/master/python/
 Utilized code is marked in the respective files.
 
 ## How to use on Mac
-1. Install python 3.
+1. Install Python IDLE Shell 3.9.12 in your terminal.
 2. Download antlr v4.11.1 from the antlr website.
 3. Add the .jar file to the /usr/local/lib folder
 4. Download all files in the directory. Navigate to the directory where these files are stored in the terminal.
@@ -24,7 +24,7 @@ It is recommended that you do **not** recompile the grammar if avoidable. If you
     - class Python3GrammarLexer(Python3LexerBase):
 
 To recompile the grammar:
-1. Install python 3.
+1. Install Python IDLE Shell 3.9.12 in your terminal.
 2. Download antlr v4.11.1 from the antlr website.
 3. Add the .jar file to the /usr/local/lib folder
 4. Download all files in the directory. Navigate to the directory where these files are stored in the terminal.
@@ -32,4 +32,3 @@ To recompile the grammar:
 - $ export CLASSPATH=".:/usr/local/lib/antlr-4.11.1-complete.jar:$CLASSPATH"  
 - $ alias antlr4='java -Xmx500M -cp "/usr/local/lib/antlr-4.11.1-complete.jar:$CLASSPATH"  
 - $ antlr4 -Dlanguage=Python3 Python3Grammar.g4
-    
