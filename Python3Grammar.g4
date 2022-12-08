@@ -32,7 +32,7 @@ NONE : 'None' ;
 num : INT | FLT | CMPLX ; //Number (integer or float)
 array : STR | lst | set_ | tup | dict_ ; //Array
 val : num | BOOL | array ; //Any literal data value
-data : val | VAR | func ; //Any data value
+data : val | VAR | func | arithExp ; //Any data value
 
 //Operators
 arop : '+' | NEG | '*' | '/' | '%' ; //Arithmatic Operation
