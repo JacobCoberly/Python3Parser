@@ -67,7 +67,7 @@ WS : ' ' -> skip ; //Skip white spaces
 func : VAR '(' ')' | VAR '(' (data) (',' (data))* ')' ;
 funcVar : VAR '(' ')' | VAR '(' (VAR) (',' (VAR))* ')'  ;
 funcDef : DEF funcVar ':' NL block ;
-return : RETURN returnPar ;
+return : RETURN returnPar? ;
 returnPar : '(' returnPar ')' | (data | arithExp) ;
 
 //Assignment/arithmatic expressions
